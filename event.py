@@ -1,4 +1,5 @@
 from icalendar import Calendar
+from datetime import timedelta
 
 
 def parse_ics(ics_file):
@@ -16,7 +17,18 @@ def parse_ics(ics_file):
     return event_metadata
 
 
+def compute_alarm_time(start_date, time_before):
+    alarm_time = start_date - timedelta(minutes=time_before)
+    print("Event time: ", start_date)
+    print("Alarm time: ", alarm_time)
+    return alarm_time
+
+
 class LocalEvent:
 
-    def __init__(self, file):
+    def __init__(self, file, alarm_time):
         self.metadata = parse_ics(file)
+        self.alarm_time = compute_alarm_time(self.metadata["dtstart"], alarm_time)
+
+    def __repr__(self):
+        return str((self.metadata, self.alarm_time))
