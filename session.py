@@ -1,5 +1,14 @@
+import datetime
+from tkinter import messagebox, Tk
+
+
 def sort_by_alarm_time(event_list):
     return sorted(event_list, key=lambda x: x.alarm_time)
+
+
+def alert(title, message):
+    show_method = getattr(messagebox, 'show{}'.format('info'))
+    show_method(title, message)
 
 
 class Session:
@@ -9,4 +18,10 @@ class Session:
 
     def start_session(self):
         while self.events:
-            print(self.events.pop(0))
+            crt_event = self.events.pop(0)
+            crt_time = datetime.datetime.now()
+            print(crt_time)
+            wait_time = crt_event.alarm_time - crt_time
+            print(wait_time.total_seconds())
+            Tk().withdraw()
+            alert(crt_event.metadata["name"], crt_event.metadata["description"])

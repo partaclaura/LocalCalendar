@@ -8,7 +8,11 @@ def parse_ics(ics_file):
     e = Calendar.from_ical(event_file.read())
     for component in e.walk():
         if component.name == "VEVENT":
-            event_metadata["name"] = component.get("name")
+            print("Component: ", component.get("name"))
+            if component.get("name"):
+                event_metadata["name"] = component.get("name")
+            else:
+                event_metadata["name"] = "Unnamed event"
             event_metadata["description"] = component.get("description")
             event_metadata["organizer"] = component.get("organizer")
             event_metadata["location"] = component.get("location")
@@ -32,3 +36,4 @@ class LocalEvent:
 
     def __repr__(self):
         return str((self.metadata, self.alarm_time))
+
