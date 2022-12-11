@@ -1,4 +1,5 @@
 import datetime
+import time
 from tkinter import messagebox, Tk
 
 
@@ -23,5 +24,6 @@ class Session:
             print(crt_time)
             wait_time = crt_event.alarm_time - crt_time
             print(wait_time.total_seconds())
+            time.sleep(wait_time.total_seconds())
             Tk().withdraw()
             alert(crt_event.metadata["name"], crt_event.metadata["description"])
