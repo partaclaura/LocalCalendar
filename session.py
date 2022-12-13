@@ -19,6 +19,8 @@ class Session:
 
     def start_session(self):
         while self.events:
+            Tk().withdraw()
+            alert("test", "test")
             crt_event = self.events.pop(0)
             crt_time = datetime.datetime.now()
             print(crt_time)

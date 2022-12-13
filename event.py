@@ -1,3 +1,5 @@
+import datetime
+from error_handling import handle_exceptions
 from icalendar import Calendar
 from datetime import timedelta
 
@@ -8,7 +10,7 @@ def parse_ics(ics_file):
     e = Calendar.from_ical(event_file.read())
     for component in e.walk():
         if component.name == "VEVENT":
-            print("Component: ", component.get("name"))
+            # print("Component: ", component.get("name"))
             if component.get("name"):
                 event_metadata["name"] = component.get("name")
             else:
@@ -23,8 +25,8 @@ def parse_ics(ics_file):
 
 def compute_alarm_time(start_date, time_before):
     alarm_time = start_date - timedelta(minutes=time_before)
-    print("Event time: ", start_date)
-    print("Alarm time: ", alarm_time)
+    # print("Event time: ", start_date)
+    # print("Alarm time: ", alarm_time)
     return alarm_time
 
 
@@ -32,8 +34,20 @@ class LocalEvent:
 
     def __init__(self, file, alarm_time):
         self.metadata = parse_ics(file)
+        self.alert_field = alarm_time
         self.alarm_time = compute_alarm_time(self.metadata["dtstart"], alarm_time)
+        self.valid = self.validate_event()
 
     def __repr__(self):
         return str((self.metadata, self.alarm_time))
 
+    def validate_event(self):
+        print("##################")
+        print("Validating event {}...".format(self.metadata["name"]))
+        now = datetime.datetime.now()
+        valid_time = now + timedelta(minutes=self.alert_field)
+        if (self.metadata["dtstart"] - datetime.datetime.now()).total_seconds() <= 0:
+            handle_exceptions(ValueError, "Invalid event: already happened!")
+            return False
+
+        return True

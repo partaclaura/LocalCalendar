@@ -12,9 +12,10 @@ def run_session(session_calendar):
     for event_file in os.scandir(session_calendar):
         if event_file.is_file():
             found_event = event.LocalEvent(event_file, 5)
-            events.append(found_event)
+            if found_event.valid:
+                events.append(found_event)
     s = session.Session(events)
-    print(s.events)
+    # print(s.events)
 
 
 if __name__ == '__main__':
@@ -22,6 +23,7 @@ if __name__ == '__main__':
     print("###### LOCAL CALENDAR ######")
     print("!Info: In this case, a calendar is represented by a folder containing events in ICS format.")
     valid = False
+    path = ""
     while not valid:
         path = input("Import calendar: ")
         print("Accessing {}...".format(path))
@@ -36,3 +38,4 @@ if __name__ == '__main__':
                     found_invalid = True
             if not found_invalid:
                 valid = True
+    run_session(path)
