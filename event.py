@@ -20,7 +20,10 @@ def parse_ics(ics_file):
             else:
                 event_metadata["description"] = "No description"
             event_metadata["organizer"] = component.get("organizer")
-            event_metadata["location"] = component.get("location")
+            if component.get("location"):
+                event_metadata["location"] = component.get("location")
+            else:
+                event_metadata["location"] = "Location Unknown"
             event_metadata["dtstart"] = component.decoded("dtstart")
             event_metadata["dtend"] = component.decoded("dtend")
     return event_metadata
@@ -49,8 +52,10 @@ class LocalEvent:
         print("Validating event {}...".format(self.metadata["name"]))
         now = datetime.datetime.now()
         valid_time = now + timedelta(minutes=self.alert_field)
+        if not self.metadata["dtstart"] or not self.metadata["dtend"]:
+            handle_exceptions(ValueError, "Invalid event: missing info!")
+            return False
         if (self.metadata["dtstart"] - datetime.datetime.now()).total_seconds() <= 0:
             handle_exceptions(ValueError, "Invalid event: already happened!")
             return False
-
         return True
