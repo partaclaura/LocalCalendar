@@ -15,7 +15,10 @@ def parse_ics(ics_file):
                 event_metadata["name"] = component.get("name")
             else:
                 event_metadata["name"] = "Unnamed event"
-            event_metadata["description"] = component.get("description")
+            if component.get("description"):
+                event_metadata["description"] = component.get("description")
+            else:
+                event_metadata["description"] = "No description"
             event_metadata["organizer"] = component.get("organizer")
             event_metadata["location"] = component.get("location")
             event_metadata["dtstart"] = component.decoded("dtstart")

@@ -1,15 +1,29 @@
 import datetime
+import threading
 import time
-from tkinter import messagebox, Tk
+from win10toast import ToastNotifier
 
 
 def sort_by_alarm_time(event_list):
     return sorted(event_list, key=lambda x: x.alarm_time)
 
 
-def alert(title, message):
-    show_method = getattr(messagebox, 'show{}'.format('info'))
-    show_method(title, message)
+def handle_event(event):
+    crt_time = datetime.datetime.now()
+    wait_time = event.alarm_time - crt_time
+    print("In ", wait_time, " minutes")
+    time.sleep(wait_time.total_seconds())
+    notify(event)
+
+
+def notify(event):
+    n = ToastNotifier()
+    try:
+        n.show_toast(event.metadata["name"], event.metadata["description"],
+                     duration=30, icon_path="Delacro-Id-Recent-Documents.ico")
+    except TypeError:
+        pass
+    print("Event notification sent!")
 
 
 class Session:
@@ -18,14 +32,10 @@ class Session:
         self.start_session()
 
     def start_session(self):
-        while self.events:
-            Tk().withdraw()
-            alert("test", "test")
-            crt_event = self.events.pop(0)
-            crt_time = datetime.datetime.now()
-            print(crt_time)
-            wait_time = crt_event.alarm_time - crt_time
-            print(wait_time.total_seconds())
-            time.sleep(wait_time.total_seconds())
-            Tk().withdraw()
-            alert(crt_event.metadata["name"], crt_event.metadata["description"])
+        if self.events:
+            while self.events:
+                crt_event = self.events.pop(0)
+                print("Upcoming event: {}".format(crt_event.metadata["name"]))
+                t = threading.Thread(target=handle_event, args=(crt_event,))
+                t.start()
+

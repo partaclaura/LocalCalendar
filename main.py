@@ -9,12 +9,12 @@ The session_calendar represents the location of the events
 
 def run_session(session_calendar):
     events = []
-    for event_file in os.scandir(session_calendar):
-        if event_file.is_file():
-            found_event = event.LocalEvent(event_file, 5)
+    for event_ics in os.scandir(session_calendar):
+        if event_ics.is_file():
+            found_event = event.LocalEvent(event_ics, 5)
             if found_event.valid:
                 events.append(found_event)
-    s = session.Session(events)
+    session.Session(events)
     # print(s.events)
 
 
