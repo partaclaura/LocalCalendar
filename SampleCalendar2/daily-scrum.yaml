@@ -1,0 +1,6 @@
+event:
+ dtstart: 2022-12-15-18-28-00
+ dtend: 2022-12-15-20-00-00
+ name: Daily
+ description: Daily-meeting
+ location: IS2003

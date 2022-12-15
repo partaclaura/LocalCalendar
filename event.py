@@ -2,6 +2,7 @@ import datetime
 from error_handling import handle_exceptions
 from icalendar import Calendar
 from datetime import timedelta
+import yaml
 
 
 def parse_ics(ics_file):
@@ -29,6 +30,20 @@ def parse_ics(ics_file):
     return event_metadata
 
 
+def parse_yaml(yaml_file):
+    event_metadata = {}
+    with open(yaml_file, 'r') as file:
+        ev_data = yaml.safe_load(file)
+        for k in ev_data['event']:
+            if k == "dtstart" or k == "dtend":
+                ft = "%Y-%m-%d-%H-%M-%S"
+                dt_obj = datetime.datetime.strptime(ev_data['event'][k], ft)
+                event_metadata[k] = dt_obj
+            else:
+                event_metadata[k] = ev_data['event'][k]
+    return event_metadata
+
+
 def compute_alarm_time(start_date, time_before):
     alarm_time = start_date - timedelta(minutes=time_before)
     # print("Event time: ", start_date)
@@ -39,7 +54,7 @@ def compute_alarm_time(start_date, time_before):
 class LocalEvent:
 
     def __init__(self, file, alarm_time):
-        self.metadata = parse_ics(file)
+        self.metadata = parse_yaml(file)
         self.alert_field = alarm_time
         self.alarm_time = compute_alarm_time(self.metadata["dtstart"], alarm_time)
         self.valid = self.validate_event()
