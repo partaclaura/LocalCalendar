@@ -32,7 +32,7 @@ def notify(event, additional_info=""):
     message = build_message(event, additional_info)
     try:
         n.show_toast(event.metadata["name"], message,
-                     duration=10, icon_path="utils/Delacro-Id-Recent-Documents.ico")
+                     duration=10, icon_path="utils/Aha-Soft-Large-Calendar-Calendar.ico")
     except TypeError:
         pass
     print("Event notification sent!")
